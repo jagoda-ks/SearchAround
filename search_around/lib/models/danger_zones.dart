@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart'; // Add this package import
 
 enum RiskLevel { yellow, red, black }
 
 class DangerZone {
   final String id;
   final String areaName;
-  final List<LatLng> coordinates;
+  final List<LatLng> coordinates; // Now using latlong2's LatLng
   final RiskLevel riskLevel;
 
   DangerZone({
@@ -16,7 +17,7 @@ class DangerZone {
     required this.riskLevel,
   });
 
-  // Generates a map polygon styling package dynamically based on level
+  // Convert our model directly into a flutter_map Polygon
   Polygon toPolygon() {
     Color strokeColor;
     Color fillColor;
@@ -37,11 +38,11 @@ class DangerZone {
     }
 
     return Polygon(
-      polygonId: PolygonId(id),
       points: coordinates,
-      strokeWidth: 2,
-      strokeColor: strokeColor,
-      fillColor: fillColor,
+      borderColor: strokeColor,
+      borderStrokeWidth: 2,
+      color: fillColor,
+      isFilled: true,
     );
   }
 }

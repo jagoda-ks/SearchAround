@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import '../services/geocoding_service.dart';
 import '../services/map_asset_service.dart';
 import '../models/danger_zones.dart';
@@ -13,62 +14,57 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  late GoogleMapController _mapController;
+  final MapController _mapController = MapController();
   final GeocodingService _geocodingService = GeocodingService();
   final MapAssetService _mapAssetService = MapAssetService();
 
-  String? _mapStyle;
   final LatLng _dublinCenter = const LatLng(53.3498, -6.2603);
-  
-  Set<Polygon> _mapPolygons = {};
-  Set<Marker> _markers = {};
+  List<Polygon> _mapPolygons = [];
+  List<Marker> _markers = [];
 
   @override
   void initState() {
     super.initState();
-    _setupMapData();
+    _loadDangerZones();
   }
 
-  Future<void> _setupMapData() async {
-    // 1. Load customization theme styles
-    String style = await _mapAssetService.loadMapStyle();
-    
-    // 2. Fetch polygons translated from 'Dublin Areas de Risco' map data
+  Future<void> _loadDangerZones() async {
     List<DangerZone> loadedZones = await _mapAssetService.loadDangerZonesFromAsset();
-    
     if (mounted) {
       setState(() {
-        _mapStyle = style.isNotEmpty ? style : null;
-        _mapPolygons = loadedZones.map((zone) => zone.toPolygon()).toSet();
+        _mapPolygons = loadedZones.map((zone) => zone.toPolygon()).toList();
       });
     }
   }
 
   Future<void> _handleEircodeSearch(String eircode) async {
-    // Basic formatting clean-up to ensure seamless cross-referencing
-    final formattedEircode = eircode.trim().toUpperCase();
-    
-    LatLng? location = await _geocodingService.getCoordinatesFromEircode(formattedEircode);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Checking registry for: $eircode...')),
+    );
+
+    LatLng? location = await _geocodingService.getCoordinatesFromEircode(eircode);
 
     if (location != null) {
       setState(() {
-        _markers = {
+        _markers = [
           Marker(
-            markerId: const MarkerId('eircode_target'),
-            position: location,
-            infoWindow: InfoWindow(title: 'Location Match', snippet: formattedEircode),
+            point: location,
+            width: 45,
+            height: 45,
+            child: const Icon(
+              Icons.location_on,
+              color: Colors.blueAccent,
+              size: 45,
+            ),
           )
-        };
+        ];
       });
 
-      _mapController.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(target: location, zoom: 14.0),
-        ),
-      );
+      // Animates camera center onto searched target address smoothly
+      _mapController.move(location, 14.5);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invalid Irish Eircode routing format.')),
+        const SnackBar(content: Text('Eircode location not found in Ireland entries.')),
       );
     }
   }
@@ -78,20 +74,29 @@ class _MapScreenState extends State<MapScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          GoogleMap(
-            initialCameraPosition: CameraPosition(
-              target: _dublinCenter,
-              zoom: 11.5,
+          FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              initialCenter: _dublinCenter,
+              initialZoom: 11.5,
             ),
-            polygons: _mapPolygons,
-            markers: _markers,
-            onMapCreated: (GoogleMapController controller) {
-              _mapController = controller;
-              if (_mapStyle != null) {
-                _mapController.setMapStyle(_mapStyle);
-              }
-            },
+            children: [
+              // FREE LAYER 1: OpenStreetMap Base Imagery
+              TileLayer(
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                userAgentPackageName: 'com.example.search_around',
+              ),
+              // FREE LAYER 2: Danger Zone Polygons loaded from your GeoJSON asset file
+              PolygonLayer(
+                polygons: _mapPolygons,
+              ),
+              // FREE LAYER 3: Interactive Location Search Pin drops
+              MarkerLayer(
+                markers: _markers,
+              ),
+            ],
           ),
+          // User input layer box layout floating over map context
           SafeArea(
             child: Align(
               alignment: Alignment.topCenter,
