@@ -12,6 +12,13 @@ class AddressInput extends StatefulWidget {
 class _AddressInputState extends State<AddressInput> {
   final _controller = TextEditingController();
 
+  void _submit() {
+    final query = _controller.text.trim();
+    if (query.isNotEmpty) {
+      widget.onSearch(query);
+    }
+  }
+
   @override
   void dispose() {
     _controller.dispose();
@@ -31,19 +38,17 @@ class _AddressInputState extends State<AddressInput> {
               child: TextField(
                 controller: _controller,
                 decoration: const InputDecoration(
-                  hintText: 'Enter Eircode (e.g., D02 X123)',
+                  hintText: 'Eircode or Irish address',
                   border: InputBorder.none,
                 ),
-                textCapitalization: TextCapitalization.characters,
+                textCapitalization: TextCapitalization.words,
+                textInputAction: TextInputAction.search,
+                onSubmitted: (_) => _submit(),
               ),
             ),
             IconButton(
               icon: const Icon(Icons.search, color: Colors.blueAccent),
-              onPressed: () {
-                if (_controller.text.trim().isNotEmpty) {
-                  widget.onSearch(_controller.text.trim());
-                }
-              },
+              onPressed: _submit,
             ),
           ],
         ),
