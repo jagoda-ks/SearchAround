@@ -1,8 +1,8 @@
 # search_around
 
-Flutter app package for **SearchAround** (Eircode Danger Map).
+Flutter app package for **SearchAround** — a Dublin accommodation map helper for students.
 
-For the full project overview, setup, and search examples, see the repository root [README](../README.md).
+For motivation, setup, search behaviour, and zone data notes, see the repository root [README](../README.md).
 
 ## Quick start
 
