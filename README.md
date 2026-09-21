@@ -2,7 +2,7 @@
 
 Flutter map app for exploring Dublin with **Eircode / Irish address search** and **danger-zone overlays**.
 
-The UI title is **Eircode Danger Map**. You can search by Eircode (for example `D02 EW93`) or by a casual Irish address (for example `Trinity Halls on Dartry Road 6` or `Grafton Street, Dublin`), then drop a pin on the map.
+The UI title is **Eircode Danger Map**. You can search by Eircode (for example `D02 EW93`) or by an Irish street address (for example `O'Connell Street, Dublin`), then drop a pin on the map.
 
 ## Features
 
@@ -10,7 +10,7 @@ The UI title is **Eircode Danger Map**. You can search by Eircode (for example `
 - Coloured danger-zone polygons loaded from local GeoJSON-style assets
 - Address search that supports:
   - **Eircodes** (exact match when present in OpenStreetMap; otherwise approximate district fallback)
-  - **Irish place / street queries**, including casual phrasing (`Halls` → `Hall`, trailing `6` → `Dublin 6`)
+  - **Irish place / street queries**, including casual phrasing (plural place names, trailing postal districts like `6` → `Dublin 6`)
 - Works Ireland-wide for street search (not Dublin-only)
 
 ## Project layout
@@ -60,7 +60,7 @@ Geocoding uses free public APIs:
 Notes:
 
 - There is **no free official Eircode API**. Exact Eircode pins only work when that code exists in OpenStreetMap.
-- Place names often need normalisation (for example OSM lists **Trinity Hall**, not “Trinity Halls”).
+- Place and street names depend on what contributors have mapped in OpenStreetMap; casual phrasing is normalised before lookup.
 - Please respect Nominatim’s [usage policy](https://operations.osmfoundation.org/policies/nominatim/) (including ~1 request/second).
 
 ### Example searches
@@ -69,7 +69,7 @@ Notes:
 | --- | --- |
 | `D02 EW93` | Pin near Grafton Street / Dublin 2 (if mapped in OSM) |
 | `Grafton Street, Dublin` | Street-level pin in Dublin |
-| `Trinity Halls on Dartry Road 6` | Trinity Hall campus on Dartry Road (not a random nearby street) |
+| `O'Connell Street, Dublin 1` | Pin on O'Connell Street in Dublin 1 |
 | `Shop Street, Galway` | Galway result (not forced to Dublin) |
 
 ## Danger zones

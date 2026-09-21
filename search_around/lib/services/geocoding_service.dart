@@ -221,10 +221,10 @@ class GeocodingService {
 
   /// Build several Nominatim-friendly phrasings from casual Irish input.
   ///
-  /// Example: "Trinity Halls on Dartry Road 6"
-  /// → "Trinity Hall Dartry Road, Dublin 6, Ireland"
-  /// → "Trinity Hall, Dublin 6, Ireland"
-  /// → "Trinity Hall, Dublin, Ireland"
+  /// Example: "Some Halls on Example Road 6"
+  /// → "Some Hall, Example Road, Dublin 6, Ireland"
+  /// → "Some Hall, Dublin 6, Ireland"
+  /// → "Some Hall, Dublin, Ireland"
   List<String> _buildAddressQueryVariants(String input) {
     final variants = <String>[];
     final seen = <String>{};
@@ -249,7 +249,7 @@ class GeocodingService {
     final streetName = _extractStreetName(normalized);
     final placeName = _extractPlaceName(normalized, streetName);
 
-    // Prefer precise place + district first (e.g. "Trinity Hall, Dublin 6").
+    // Prefer precise place + district first (e.g. "Place Name, Dublin 6").
     if (placeName != null && district != null) {
       add('$placeName, $district');
     }
@@ -371,8 +371,8 @@ class GeocodingService {
   }
 
   String? _extractStreetName(String normalized) {
-    // Take the street clause nearest the end (before district), e.g. "Dartry Road"
-    // from "Trinity Hall Dartry Road, Dublin 6".
+    // Take the street clause nearest the end (before district), e.g. "Example Road"
+    // from "Place Name Example Road, Dublin 6".
     final matches = RegExp(
       r'((?:[A-Za-z0-9\-]+\s+){0,3}'
       r'(?:road|street|avenue|lane|drive|close|crescent|place|quay|terrace|'
