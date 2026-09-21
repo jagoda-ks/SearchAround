@@ -1,12 +1,12 @@
 name: search_around
-description: "A new Flutter project."
+description: "Eircode Danger Map — Flutter map app for Irish address/Eircode search and danger-zone overlays."
 
 publish_to: 'none'
 
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.11.0
+  sdk: ">=3.5.0 <4.0.0"
 
 dependencies:
   flutter:
