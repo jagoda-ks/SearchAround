@@ -5,10 +5,14 @@ import '../models/address_model.dart';
 import '../models/danger_zones.dart';
 import '../services/geocoding_service.dart';
 import '../services/map_asset_service.dart';
+import '../services/settings_controller.dart';
 import 'widgets/address_input.dart';
+import 'widgets/settings_panel.dart';
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  final SettingsController settings;
+
+  const MapScreen({super.key, required this.settings});
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -117,6 +121,15 @@ class _MapScreenState extends State<MapScreen> {
             child: Align(
               alignment: Alignment.topCenter,
               child: AddressInput(onSearch: _handleAddressSearch),
+            ),
+          ),
+          SafeArea(
+            child: Align(
+              alignment: Alignment.bottomRight,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: SettingsButton(settings: widget.settings),
+              ),
             ),
           ),
         ],
