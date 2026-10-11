@@ -7,19 +7,25 @@ import 'package:search_around/app.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('App loads map search and settings control', (tester) async {
+  testWidgets('Settings opens dyslexia font toggle', (tester) async {
     SharedPreferences.setMockInitialValues({});
 
     await tester.pumpWidget(const DangerZoneApp());
-    await tester.pump(); // allow settings load future to start
+    await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.byIcon(Icons.settings), findsOneWidget);
-    expect(find.byIcon(Icons.search), findsOneWidget);
 
     await tester.tap(find.byIcon(Icons.settings));
     await tester.pumpAndSettle();
 
     expect(find.text('Dyslexia-friendly font'), findsOneWidget);
+    expect(find.byType(SwitchListTile), findsOneWidget);
+
+    await tester.tap(find.byType(Switch));
+    await tester.pumpAndSettle();
+
+    final Switch toggle = tester.widget(find.byType(Switch));
+    expect(toggle.value, isTrue);
   });
 }
