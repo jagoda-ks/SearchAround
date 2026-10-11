@@ -123,13 +123,11 @@ class _MapScreenState extends State<MapScreen> {
               child: AddressInput(onSearch: _handleAddressSearch),
             ),
           ),
-          SafeArea(
-            child: Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: SettingsButton(settings: widget.settings),
-              ),
+          Positioned(
+            right: 16,
+            bottom: 16,
+            child: SafeArea(
+              child: SettingsButton(settings: widget.settings),
             ),
           ),
         ],

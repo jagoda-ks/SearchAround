@@ -33,7 +33,6 @@ class _DangerZoneAppState extends State<DangerZoneApp> {
 
     if (!useDyslexiaFont) return base;
 
-    // Apply OpenDyslexic across Material text styles as well.
     return base.copyWith(
       textTheme: base.textTheme.apply(fontFamily: 'OpenDyslexic'),
       primaryTextTheme: base.primaryTextTheme.apply(fontFamily: 'OpenDyslexic'),
@@ -42,16 +41,19 @@ class _DangerZoneAppState extends State<DangerZoneApp> {
 
   @override
   Widget build(BuildContext context) {
+    // Keep MapScreen as a stable child so theme/settings updates do not
+    // recreate the map (which would drop markers and reset UI state).
     return ListenableBuilder(
       listenable: _settings,
-      builder: (context, _) {
+      builder: (context, child) {
         return MaterialApp(
           title: 'Eircode Danger Map',
           debugShowCheckedModeBanner: false,
           theme: _buildTheme(_settings.useDyslexiaFont),
-          home: MapScreen(settings: _settings),
+          home: child,
         );
       },
+      child: MapScreen(settings: _settings),
     );
   }
 }
