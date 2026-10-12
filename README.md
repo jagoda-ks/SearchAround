@@ -14,6 +14,7 @@ The on-screen title is **Eircode Danger Map**. Today the focus is Dublin; the lo
   - **Red** — higher concern
   - **Black** — highest concern
 - Use the default [flutter_map](https://pub.dev/packages/flutter_map) stack with OpenStreetMap tiles
+- Open **Settings** (bottom-right) to switch on a **dyslexia-friendly OpenDyslexic** font; the choice is remembered between launches
 
 Zone shapes come from publicly shared “areas to avoid” style guidance for Dublin ([The Irish Road Trip](https://www.theirishroadtrip.com/dublin-areas-to-avoid/)), converted into `search_around/assets/danger_regions.json` for the app.
 
